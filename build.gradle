@@ -1,0 +1,81 @@
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    apply plugin: 'java-library-distribution'
+    dependencies {
+        // https://mvnrepository.com/artifact/junit/junit
+        testImplementation group: 'junit', name: 'junit', version: '4.13.2'
+        implementation group: 'org.springframework', name: 'spring-context', version: '6.0.3'
+        implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
+    }
+}
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.2"
+    }
+}
+project(':common') {
+    dependencies{
+        // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+        api group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.1'
+    }
+}
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:3.0.2"
+    }
+}
+project(':server-core') {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    dependencies {
+        api project(":common")
+        implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+//        implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.1'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '3.0.2'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '3.0.2'
+        implementation group: 'org.springframework', name: 'spring-web', version: '6.0.4'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.0.2'
+        testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.0.2'
+    }
+}
+project(':tracker-core') {
+    apply plugin: 'org.springframework.boot'
+    dependencies {
+        api project(":common")
+        implementation project(":server-core")
+        implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.14.1'
+
+        implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.6'
+        implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.4.5'
+//        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '3.0.2'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-devtools', version: '3.0.2'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '3.0.2'
+        testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.0.2'
+    }
+}
+project(':server-ui') {
+    dependencies {
+        api project(":common")
+
+    }
+}
+
+project(':tracker-ui') {
+    dependencies {
+        api project(":common")
+    }
+}
